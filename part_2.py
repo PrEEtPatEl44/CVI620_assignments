@@ -34,7 +34,6 @@ def adjust_contrast(image, value):
     return new_image
 
 def manual_blend(image1):
-
     print("Enter the path of the second image to blend with:")
     img_path = input()
     image2 = load_img(img_path)
@@ -63,6 +62,27 @@ def grayscale(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     return cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 
+def apply_thresholding(image):
+    print("""thresholding method: 
+                1. Binary
+                2. Inverse
+          """)
+    method = int(input("Select method (1 or 2): "))
+
+    print("Enter the threshold value (0-255):")
+    thresh_value = int(input())
+    if not (0 <= thresh_value <= 255):
+        raise ValueError("Threshold value must be between 0 and 255.")
+
+    if method == 1:
+        _, thresh_img = cv2.threshold(image, thresh_value, 255, cv2.THRESH_BINARY)
+    elif method == 2:
+        _, thresh_img = cv2.threshold(image, thresh_value, 255, cv2.THRESH_BINARY_INV)
+    else:
+        raise ValueError("Invalid thresholding method. Use 'binary' or 'inverse'.")
+    
+    return thresh_img
+
 image_history = []
 
 def main():
@@ -75,7 +95,7 @@ def main():
         except ValueError as e:
             print(e)
             continue
-
+    edited_img = img.copy()
    
     while True:
 
@@ -91,24 +111,30 @@ def main():
               9. Save and Exit
             """)
         option = input("Select an option: ")
-        if option == "1":
-            value = int(input("Enter brightness value(use -value for decreasing brgithness): "))
-            edited_img = adjust_brightness(edited_img, value)
-        elif option == "2":
-            value = float(input("Enter contrast value : "))
-            edited_img = adjust_contrast(edited_img, value)
-        elif option == "3":
-            edited_img = grayscale(edited_img)
-        elif option == "6":
-            edited_img = manual_blend(edited_img)
-        elif option == "9":
-            filename = input("Enter filename to : ")
-            save_and_exit(edited_img, filename)
+        try:
+            if option == "1":
+                value = int(input("Enter brightness value(use -value for decreasing brgithness): "))
+                edited_img = adjust_brightness(edited_img, value)
+            elif option == "2":
+                value = float(input("Enter contrast value : "))
+                edited_img = adjust_contrast(edited_img, value)
+            elif option == "3":
+                edited_img = grayscale(edited_img)
+            elif option == "5":
+                edited_img = apply_thresholding(edited_img)
+            elif option == "6":
+                edited_img = manual_blend(edited_img)
+            elif option == "9":
+                filename = input("Enter filename to : ")
+                save_and_exit(edited_img, filename)
+
+            else:
+                print("Option not implemented yet.")
         
-        else:
-            print("Option not implemented yet.")
-        
-        show_image_comparision(img, edited_img)
+            show_image_comparision(img, edited_img)
+        except Exception as e:
+            print(f"Error: {e}")
+            continue
 
 
 if __name__ == "__main__":
