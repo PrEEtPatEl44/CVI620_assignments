@@ -114,15 +114,7 @@ def add_padding(image):
     if pad_option not in [1, 2, 3, 4]:
         raise ValueError("Invalid padding option. Choose 1, 2, 3, or 4.")
     border_type = border_types[pad_option]
-    # if pad_option == 1:
-    #     border_type = cv2.BORDER_CONSTANT
-    # elif pad_option == 2:
-    #     border_type = cv2.BORDER_REFLECT
-    # elif pad_option == 3:
-    #     border_type = cv2.BORDER_REPLICATE
-    # elif pad_option == 4:
-    #     border_type = cv2.BORDER_WRAP
-    
+
     ratios = {1: 1, 2: 16/9, 3: 4/3, 4: -1}
     print("""Padding ratios:
                 1. 1:1 
@@ -146,14 +138,6 @@ def add_padding(image):
         except ValueError:
             raise ValueError("Invalid ratio format. Use 'x:y' format.")
         target_ratio = w / h
-    # if pad_ratio == 1:
-    #     target_ratio = 1
-    # elif pad_ratio == 2:
-    #     target_ratio = 16 / 9
-    # elif pad_ratio == 3:
-    #     target_ratio = 4 / 3
-    # elif pad_ratio == 4:
-       
     
     current_ratio = image.shape[1] / image.shape[0]
 
