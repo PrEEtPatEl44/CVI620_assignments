@@ -10,7 +10,7 @@ def load_img(path):
     return img
 
 def show_image_comparision(original, edited):    
-    plt.figure(figsize=(10, 2))
+    plt.figure(figsize=(12, 5))
     plt.subplot(121)
 
     plt.imshow(cv2.cvtColor(original, cv2.COLOR_BGR2RGB))
@@ -109,19 +109,21 @@ def add_padding(image):
                 3. replicate
                 4. wrap
             """) 
+    border_types = {1: cv2.BORDER_CONSTANT, 2: cv2.BORDER_REFLECT, 3: cv2.BORDER_REPLICATE, 4: cv2.BORDER_WRAP} 
     pad_option = int(input("Select padding option (1, 2, 3, or 4): "))
     if pad_option not in [1, 2, 3, 4]:
         raise ValueError("Invalid padding option. Choose 1, 2, 3, or 4.")
+    border_type = border_types[pad_option]
+    # if pad_option == 1:
+    #     border_type = cv2.BORDER_CONSTANT
+    # elif pad_option == 2:
+    #     border_type = cv2.BORDER_REFLECT
+    # elif pad_option == 3:
+    #     border_type = cv2.BORDER_REPLICATE
+    # elif pad_option == 4:
+    #     border_type = cv2.BORDER_WRAP
     
-    if pad_option == 1:
-        border_type = cv2.BORDER_CONSTANT
-    elif pad_option == 2:
-        border_type = cv2.BORDER_REFLECT
-    elif pad_option == 3:
-        border_type = cv2.BORDER_REPLICATE
-    elif pad_option == 4:
-        border_type = cv2.BORDER_WRAP
-    
+    ratios = {1: 1, 2: 16/9, 3: 4/3, 4: -1}
     print("""Padding ratios:
                 1. 1:1 
                 2. 16:9 
@@ -129,17 +131,13 @@ def add_padding(image):
                 4. Custom Ratio
           """)
     pad_ratio = int(input("Select padding ratio (1, 2, 3 or 4): "))
-    
+
     if pad_ratio not in [1, 2, 3, 4]:
         raise ValueError("Invalid padding ratio. Choose 1, 2, 3 or 4.")
     
-    if pad_ratio == 1:
-        target_ratio = 1
-    elif pad_ratio == 2:
-        target_ratio = 16 / 9
-    elif pad_ratio == 3:
-        target_ratio = 4 / 3
-    elif pad_ratio == 4:
+    target_ratio = ratios[pad_ratio]
+    
+    if target_ratio == -1:
         ratio_input = input("Enter custom ratio (x:y): ")
         try:
             w_str,h_str = ratio_input.split(":")
@@ -148,6 +146,14 @@ def add_padding(image):
         except ValueError:
             raise ValueError("Invalid ratio format. Use 'x:y' format.")
         target_ratio = w / h
+    # if pad_ratio == 1:
+    #     target_ratio = 1
+    # elif pad_ratio == 2:
+    #     target_ratio = 16 / 9
+    # elif pad_ratio == 3:
+    #     target_ratio = 4 / 3
+    # elif pad_ratio == 4:
+       
     
     current_ratio = image.shape[1] / image.shape[0]
 
