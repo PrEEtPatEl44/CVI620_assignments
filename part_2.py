@@ -56,11 +56,18 @@ def manual_blend(image1):
 
     return manual_img
 
-def save_and_exit(image, filename):
-    cv2.imwrite(filename, image)
-    print(f"Image saved as {filename}")
-    view_history()
-    exit()
+def save_and_exit(image):
+    print("save image? (y/n)")
+    save = input().lower()
+    if save != 'y':
+        print("Image not saved. Exiting without saving.")
+        exit()
+    else:
+        filename = input("Enter the filename to save the image : ")
+        cv2.imwrite(filename, image)
+        print(f"Image saved as {filename}")
+        view_history()
+        exit()
 
 def grayscale(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -135,7 +142,9 @@ def add_padding(image):
     elif pad_ratio == 4:
         ratio_input = input("Enter custom ratio (x:y): ")
         try:
-            w,h = int(ratio_input.split(":"))
+            w_str,h_str = ratio_input.split(":")
+            w = int(w_str)
+            h = int(h_str)
         except ValueError:
             raise ValueError("Invalid ratio format. Use 'x:y' format.")
         target_ratio = w / h
@@ -214,9 +223,9 @@ def main():
                 edited_img = manual_blend(edited_img)
             elif option == "8":
                 view_history()
+                continue
             elif option == "9":
-                filename = input("Enter filename to : ")
-                save_and_exit(edited_img, filename)
+                save_and_exit(edited_img)
 
             else:
                 print("Option not implemented yet.")
