@@ -27,10 +27,12 @@ def show_image_comparision(original, edited):
 
 def adjust_brightness(image, value):
     new_image = cv2.convertScaleAbs(image, beta=value)
+    action_history.append(f"Brightness {value}")
     return new_image
 
 def adjust_contrast(image, value):
     new_image = cv2.convertScaleAbs(image, alpha=value)
+    action_history.append(f"Contrast {value}")
     return new_image
 
 def manual_blend(image1):
@@ -50,17 +52,21 @@ def manual_blend(image1):
     manual_img = alpha * image1 + beta * image2
     np.clip(manual_img, 0, 255)  
     manual_img = manual_img.astype(np.uint8)
+    action_history.append(f"Blended with alpha {alpha}")
 
     return manual_img
 
 def save_and_exit(image, filename):
     cv2.imwrite(filename, image)
     print(f"Image saved as {filename}")
+    view_history()
     exit()
 
 def grayscale(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    return cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+    gray_bgr = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+    action_history.append("Grayscaled")
+    return gray_bgr
 
 def apply_thresholding(image):
     print("""thresholding method: 
@@ -80,7 +86,7 @@ def apply_thresholding(image):
         _, thresh_img = cv2.threshold(image, thresh_value, 255, cv2.THRESH_BINARY_INV)
     else:
         raise ValueError("Invalid thresholding method. Use 'binary' or 'inverse'.")
-    
+    action_history.append(f"applied thresholding with value {thresh_value} {'binary' if method == 1 else 'inverse'}")
     return thresh_img
 
 def add_padding(image):
@@ -150,11 +156,20 @@ def add_padding(image):
         left = pad_w // 2
         right = pad_w - left
         top = bottom = 0
-
+    action_history.append(f"added padding with size {size}, ratio {target_ratio} and type {pad_option}")
 
     return cv2.copyMakeBorder(image, top, bottom, left, right, border_type, value=[0, 0, 0])
 
+def view_history():
+    if not action_history:
+        print("No actions performed yet.")
+    else:
+        print("Action History:")
+        for i, action in enumerate(action_history, 1):
+            print(f"{i}. {action}")
+
 image_history = []
+action_history = []
 
 def main():
    
@@ -197,6 +212,8 @@ def main():
                 edited_img = apply_thresholding(edited_img)
             elif option == "6":
                 edited_img = manual_blend(edited_img)
+            elif option == "8":
+                view_history()
             elif option == "9":
                 filename = input("Enter filename to : ")
                 save_and_exit(edited_img, filename)
