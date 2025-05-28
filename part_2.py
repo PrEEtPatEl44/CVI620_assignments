@@ -9,7 +9,7 @@ def load_img(path):
         raise ValueError("image not found.")
     return img
 
-def show_image_comparision(original, edited):
+def show_image_comparision(original, edited):    
     plt.figure(figsize=(10, 2))
     plt.subplot(121)
 
@@ -177,6 +177,16 @@ def view_history():
         for i, action in enumerate(action_history, 1):
             print(f"{i}. {action}")
 
+def undo_last_operation(image_history):
+    if len(image_history) == 1:
+        print("No actions to undo.")
+    else:
+        image_history.pop()
+        action_history.pop()
+     
+    #action_history.append("Undo last operation")
+    return image_history[-1]
+
 image_history = []
 action_history = []
 
@@ -186,6 +196,8 @@ def main():
         img_path = input("Enter the path of the image to edit: ")
         try:
             img = load_img(img_path)
+            #append the original image to history as the first entry
+            image_history.append(img.copy())
             break
         except ValueError as e:
             print(e)
@@ -221,15 +233,19 @@ def main():
                 edited_img = apply_thresholding(edited_img)
             elif option == "6":
                 edited_img = manual_blend(edited_img)
+            elif option == "7":
+                edited_img = undo_last_operation(image_history)
+                continue
             elif option == "8":
                 view_history()
                 continue
             elif option == "9":
                 save_and_exit(edited_img)
-
+                continue
             else:
                 print("Option not implemented yet.")
-        
+
+            image_history.append(edited_img.copy())
             show_image_comparision(img, edited_img)
         except Exception as e:
             print(f"Error: {e}")
