@@ -83,6 +83,77 @@ def apply_thresholding(image):
     
     return thresh_img
 
+def add_padding(image):
+    print("Enter the size of padding : ")
+    size = int(input())
+    if size <= 0:
+        raise ValueError("Padding size must be a positive integer.")
+
+    print("Choose padding type:")
+    print("""Padding options:
+                1. constant
+                2. reflect
+                3. replicate
+                4. wrap
+            """) 
+    pad_option = int(input("Select padding option (1, 2, 3, or 4): "))
+    if pad_option not in [1, 2, 3, 4]:
+        raise ValueError("Invalid padding option. Choose 1, 2, 3, or 4.")
+    
+    if pad_option == 1:
+        border_type = cv2.BORDER_CONSTANT
+    elif pad_option == 2:
+        border_type = cv2.BORDER_REFLECT
+    elif pad_option == 3:
+        border_type = cv2.BORDER_REPLICATE
+    elif pad_option == 4:
+        border_type = cv2.BORDER_WRAP
+    
+    print("""Padding ratios:
+                1. 1:1 
+                2. 16:9 
+                3. 4:3 
+                4. Custom Ratio
+          """)
+    pad_ratio = int(input("Select padding ratio (1, 2, 3 or 4): "))
+    
+    if pad_ratio not in [1, 2, 3, 4]:
+        raise ValueError("Invalid padding ratio. Choose 1, 2, 3 or 4.")
+    
+    if pad_ratio == 1:
+        target_ratio = 1
+    elif pad_ratio == 2:
+        target_ratio = 16 / 9
+    elif pad_ratio == 3:
+        target_ratio = 4 / 3
+    elif pad_ratio == 4:
+        ratio_input = input("Enter custom ratio (x:y): ")
+        try:
+            w,h = int(ratio_input.split(":"))
+        except ValueError:
+            raise ValueError("Invalid ratio format. Use 'x:y' format.")
+        target_ratio = w / h
+    
+    current_ratio = image.shape[1] / image.shape[0]
+
+    if current_ratio > target_ratio:
+        #pad the height, width remains same
+        new_h = int(image.shape[1] / target_ratio)
+        pad_h = new_h - image.shape[0]
+        top = pad_h // 2
+        bottom = pad_h - top
+        left = right = 0
+    else:
+        #pad the width, height remains same
+        new_w = int(image.shape[0] * target_ratio)
+        pad_w = new_w - image.shape[1]
+        left = pad_w // 2
+        right = pad_w - left
+        top = bottom = 0
+
+
+    return cv2.copyMakeBorder(image, top, bottom, left, right, border_type, value=[0, 0, 0])
+
 image_history = []
 
 def main():
@@ -120,6 +191,8 @@ def main():
                 edited_img = adjust_contrast(edited_img, value)
             elif option == "3":
                 edited_img = grayscale(edited_img)
+            elif option == "4":
+                edited_img = add_padding(edited_img)
             elif option == "5":
                 edited_img = apply_thresholding(edited_img)
             elif option == "6":
