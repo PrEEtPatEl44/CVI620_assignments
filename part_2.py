@@ -52,7 +52,7 @@ def manual_blend(image1):
     manual_img = alpha * image1 + beta * image2
     np.clip(manual_img, 0, 255)  
     manual_img = manual_img.astype(np.uint8)
-    action_history.append(f"Blended with alpha {alpha}")
+    action_history.append(f"Blending - img:{img_path},  alpha:{alpha}")
 
     return manual_img
 
@@ -93,7 +93,7 @@ def apply_thresholding(image):
         _, thresh_img = cv2.threshold(image, thresh_value, 255, cv2.THRESH_BINARY_INV)
     else:
         raise ValueError("Invalid thresholding method. Use 'binary' or 'inverse'.")
-    action_history.append(f"applied thresholding with value {thresh_value} {'binary' if method == 1 else 'inverse'}")
+    action_history.append(f"Thresholding - value: {thresh_value}, type: {'Binary' if method == 1 else 'Inverse'}")
     return thresh_img
 
 def add_padding(image):
@@ -165,7 +165,7 @@ def add_padding(image):
         left = pad_w // 2
         right = pad_w - left
         top = bottom = 0
-    action_history.append(f"added padding with size {size}, ratio {target_ratio} and type {pad_option}")
+    action_history.append(f"Padding - sizee: {size}, ratio: {target_ratio} and type: {pad_option}")
 
     return cv2.copyMakeBorder(image, top, bottom, left, right, border_type, value=[0, 0, 0])
 
