@@ -1,60 +1,8 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-def load_img(path):
-    img = cv2.imread(path)
-    if img is None:
-        raise ValueError("image not found.")
-    return img
-
-def show_image_comparision(original, edited):    
-    plt.figure(figsize=(12, 5))
-    plt.subplot(121)
-
-    plt.imshow(cv2.cvtColor(original, cv2.COLOR_BGR2RGB))
-    plt.title("Original")
-    plt.axis("off")
-    plt.subplot(122)
-    
-    plt.imshow(cv2.cvtColor(edited, cv2.COLOR_BGR2RGB))
-    plt.title("Edited")
-    plt.axis("off")
-
-    plt.tight_layout()
-    plt.show()
-
-def adjust_brightness(image, value):
-    new_image = cv2.convertScaleAbs(image, beta=value)
-    action_history.append(f"Brightness {value}")
-    return new_image
-
-def adjust_contrast(image, value):
-    new_image = cv2.convertScaleAbs(image, alpha=value)
-    action_history.append(f"Contrast {value}")
-    return new_image
-
-def manual_blend(image1):
-    print("Enter the path of the second image to blend with:")
-    img_path = input()
-    image2 = load_img(img_path)
-    print("Enter alpha value for blending (0 to 1):")
-    alpha = float(input())
-    
-    if not (0 <= alpha <= 1):
-        raise ValueError("Alpha must be between 0 and 1.")
-    
-    if image1.shape != image2.shape:
-        image2 = cv2.resize(image2, (image1.shape[1], image1.shape[0]))
-    
-    beta = 1 - alpha
-    manual_img = alpha * image1 + beta * image2
-    np.clip(manual_img, 0, 255)  
-    manual_img = manual_img.astype(np.uint8)
-    action_history.append(f"Blending - img:{img_path},  alpha:{alpha}")
-
-    return manual_img
+from imageEditor import *
+from history import *
 
 def save_and_exit(image):
     print("save image? (y/n)")
@@ -69,116 +17,26 @@ def save_and_exit(image):
         view_history()
         exit()
 
-def grayscale(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray_bgr = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-    action_history.append("Grayscaled")
-    return gray_bgr
+# def view_history():
+#     if not action_history:
+#         print("No actions performed yet.")
+#     else:
+#         print("Action History:")
+#         for i, action in enumerate(action_history, 1):
+#             print(f"{i}. {action}")
 
-def apply_thresholding(image):
-    print("""thresholding method: 
-                1. Binary
-                2. Inverse
-          """)
-    method = int(input("Select method (1 or 2): "))
-
-    print("Enter the threshold value (0-255):")
-    thresh_value = int(input())
-    if not (0 <= thresh_value <= 255):
-        raise ValueError("Threshold value must be between 0 and 255.")
-
-    if method == 1:
-        _, thresh_img = cv2.threshold(image, thresh_value, 255, cv2.THRESH_BINARY)
-    elif method == 2:
-        _, thresh_img = cv2.threshold(image, thresh_value, 255, cv2.THRESH_BINARY_INV)
-    else:
-        raise ValueError("Invalid thresholding method. Use 'binary' or 'inverse'.")
-    action_history.append(f"Thresholding - value: {thresh_value}, type: {'Binary' if method == 1 else 'Inverse'}")
-    return thresh_img
-
-def add_padding(image):
-    print("Enter the size of padding : ")
-    size = int(input())
-    if size <= 0:
-        raise ValueError("Padding size must be a positive integer.")
-
-    print("Choose padding type:")
-    print("""Padding options:
-                1. constant
-                2. reflect
-                3. replicate
-                4. wrap
-            """) 
-    border_types = {1: cv2.BORDER_CONSTANT, 2: cv2.BORDER_REFLECT, 3: cv2.BORDER_REPLICATE, 4: cv2.BORDER_WRAP} 
-    pad_option = int(input("Select padding option (1, 2, 3, or 4): "))
-    if pad_option not in [1, 2, 3, 4]:
-        raise ValueError("Invalid padding option. Choose 1, 2, 3, or 4.")
-    border_type = border_types[pad_option]
-
-    ratios = {1: 1, 2: 16/9, 3: 4/3, 4: -1}
-    print("""Padding ratios:
-                1. 1:1 
-                2. 16:9 
-                3. 4:3 
-                4. Custom Ratio
-          """)
-    pad_ratio = int(input("Select padding ratio (1, 2, 3 or 4): "))
-
-    if pad_ratio not in [1, 2, 3, 4]:
-        raise ValueError("Invalid padding ratio. Choose 1, 2, 3 or 4.")
-    
-    target_ratio = ratios[pad_ratio]
-    
-    if target_ratio == -1:
-        ratio_input = input("Enter custom ratio (x:y): ")
-        try:
-            w_str,h_str = ratio_input.split(":")
-            w = int(w_str)
-            h = int(h_str)
-        except ValueError:
-            raise ValueError("Invalid ratio format. Use 'x:y' format.")
-        target_ratio = w / h
-    
-    current_ratio = image.shape[1] / image.shape[0]
-
-    if current_ratio > target_ratio:
-        #pad the height, width remains same
-        new_h = int(image.shape[1] / target_ratio)
-        pad_h = new_h - image.shape[0]
-        top = pad_h // 2
-        bottom = pad_h - top
-        left = right = 0
-    else:
-        #pad the width, height remains same
-        new_w = int(image.shape[0] * target_ratio)
-        pad_w = new_w - image.shape[1]
-        left = pad_w // 2
-        right = pad_w - left
-        top = bottom = 0
-    action_history.append(f"Padding - sizee: {size}, ratio: {target_ratio} and type: {pad_option}")
-
-    return cv2.copyMakeBorder(image, top, bottom, left, right, border_type, value=[0, 0, 0])
-
-def view_history():
-    if not action_history:
-        print("No actions performed yet.")
-    else:
-        print("Action History:")
-        for i, action in enumerate(action_history, 1):
-            print(f"{i}. {action}")
-
-def undo_last_operation(image_history):
-    if len(image_history) == 1:
-        print("No actions to undo.")
-    else:
-        image_history.pop()
-        action_history.pop()
+# def undo_last_operation(image_history):
+#     if len(image_history) == 1:
+#         print("No actions to undo.")
+#     else:
+#         image_history.pop()
+#         # action_history.pop()
      
-    #action_history.append("Undo last operation")
-    return image_history[-1]
+#     #action_history.append("Undo last operation")
+#     return image_history[-1]
 
-image_history = []
-action_history = []
+# image_history = []
+# action_history = []
 
 def main():
    
@@ -212,19 +70,86 @@ def main():
             if option == "1":
                 value = int(input("Enter brightness value(use -value for decreasing brgithness): "))
                 edited_img = adjust_brightness(edited_img, value)
+                log_action(f"Brightness {value}")
             elif option == "2":
                 value = float(input("Enter contrast value : "))
                 edited_img = adjust_contrast(edited_img, value)
+                log_action(f"Contrast {value}")
             elif option == "3":
                 edited_img = grayscale(edited_img)
+                log_action("Grayscaled")
             elif option == "4":
-                edited_img = add_padding(edited_img)
+
+                print("Enter the size of padding : ")
+                size = int(input())
+                if size <= 0:
+                    raise ValueError("Padding size must be a positive integer.")
+
+                print("Choose padding type:")
+                print("""Padding options:
+                            1. constant
+                            2. reflect
+                            3. replicate
+                            4. wrap
+                        """) 
+                border_types = {1: cv2.BORDER_CONSTANT, 2: cv2.BORDER_REFLECT, 3: cv2.BORDER_REPLICATE, 4: cv2.BORDER_WRAP} 
+                pad_option = int(input("Select padding option (1, 2, 3, or 4): "))
+                if pad_option not in [1, 2, 3, 4]:
+                    raise ValueError("Invalid padding option. Choose 1, 2, 3, or 4.")
+                border_type = border_types[pad_option]
+
+                ratios = {1: 1, 2: 16/9, 3: 4/3, 4: -1}
+                print("""Padding ratios:
+                            1. 1:1 
+                            2. 16:9 
+                            3. 4:3 
+                            4. Custom Ratio
+                      """)
+                pad_ratio = int(input("Select padding ratio (1, 2, 3 or 4): "))
+
+                if pad_ratio not in [1, 2, 3, 4]:
+                    raise ValueError("Invalid padding ratio. Choose 1, 2, 3 or 4.")
+
+                target_ratio = ratios[pad_ratio]
+
+
+                edited_img = add_padding(edited_img, target_ratio, border_type, size)
+                log_action(f"Padding - size: {size}, ratio: {target_ratio}, type: {pad_option}")
+
             elif option == "5":
-                edited_img = apply_thresholding(edited_img)
+                
+                print("""thresholding method: 
+                1. Binary
+                2. Inverse
+                """)
+                method = int(input("Select method (1 or 2): "))
+                if method not in [1, 2]:
+                    raise ValueError("Invalid method Choose 1 for Binary or 2 for Inverse.")
+                
+                print("Enter the threshold value (0-255):")
+                thresh_value = int(input())
+                if not (0 <= thresh_value <= 255):
+                    raise ValueError("Threshold value must be between 0 and 255.")
+
+                edited_img = apply_thresholding(edited_img, method, thresh_value)
+                log_action(f"Thresholding - value: {thresh_value}, type: {'Binary' if method == 1 else 'Inverse'}")
+                
             elif option == "6":
-                edited_img = manual_blend(edited_img)
+
+                print("Enter the path of the second image to blend with:")
+                img_path = input()
+                image2 = load_img(img_path)
+
+                print("Enter alpha value for blending (0 to 1):")
+                alpha = float(input())
+                if not (0 <= alpha <= 1):
+                    raise ValueError("Alpha must be between 0 and 1.")
+                
+                edited_img = manual_blend(edited_img, image2, alpha)
+                log_action(f"Blending - img:{img_path},  alpha:{alpha}")
+
             elif option == "7":
-                edited_img = undo_last_operation(image_history)
+                edited_img = undo_last_operation()
                 continue
             elif option == "8":
                 view_history()
@@ -235,7 +160,8 @@ def main():
             else:
                 print("Option not implemented yet.")
 
-            image_history.append(edited_img.copy())
+            
+            push_image(edited_img.copy())
             show_image_comparision(img, edited_img)
         except Exception as e:
             print(f"Error: {e}")
