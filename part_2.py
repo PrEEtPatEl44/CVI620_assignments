@@ -17,27 +17,6 @@ def save_and_exit(image):
         view_history()
         exit()
 
-# def view_history():
-#     if not action_history:
-#         print("No actions performed yet.")
-#     else:
-#         print("Action History:")
-#         for i, action in enumerate(action_history, 1):
-#             print(f"{i}. {action}")
-
-# def undo_last_operation(image_history):
-#     if len(image_history) == 1:
-#         print("No actions to undo.")
-#     else:
-#         image_history.pop()
-#         # action_history.pop()
-     
-#     #action_history.append("Undo last operation")
-#     return image_history[-1]
-
-# image_history = []
-# action_history = []
-
 def main():
    
     while True:
