@@ -34,15 +34,15 @@ def main():
     while True:
 
         print("""==== Mini Photo Editor ====
-              1. Adjust Brightness
-              2. Adjust Contrast
-              3. Convert to Grayscale
-              4. Add Padding (choose border type)
-              5. Apply Thresholding (binary or inverse)
-              6. Blend with Another Image (manual alpha)
-              7. Undo Last Operation
-              8. View History of Operations
-              9. Save and Exit
+1. Adjust Brightness
+2. Adjust Contrast
+3. Convert to Grayscale
+4. Add Padding (choose border type)
+5. Apply Thresholding (binary or inverse)
+6. Blend with Another Image (manual alpha)
+7. Undo Last Operation
+8. View History of Operations
+9. Save and Exit
             """)
         option = input("Select an option: ")
         try:
@@ -66,10 +66,10 @@ def main():
 
                 print("Choose padding type:")
                 print("""Padding options:
-                            1. constant
-                            2. reflect
-                            3. replicate
-                            4. wrap
+1. constant
+2. reflect
+3. replicate
+4. wrap
                         """) 
                 border_types = {1: cv2.BORDER_CONSTANT, 2: cv2.BORDER_REFLECT, 3: cv2.BORDER_REPLICATE, 4: cv2.BORDER_WRAP} 
                 pad_option = int(input("Select padding option (1, 2, 3, or 4): "))
@@ -79,10 +79,10 @@ def main():
 
                 ratios = {1: 1, 2: 16/9, 3: 4/3, 4: -1}
                 print("""Padding ratios:
-                            1. 1:1 
-                            2. 16:9 
-                            3. 4:3 
-                            4. Custom Ratio
+1. 1:1 
+2. 16:9 
+3. 4:3 
+4. Custom Ratio
                       """)
                 pad_ratio = int(input("Select padding ratio (1, 2, 3 or 4): "))
 
@@ -98,8 +98,8 @@ def main():
             elif option == "5":
                 
                 print("""thresholding method: 
-                1. Binary
-                2. Inverse
+1. Binary
+2. Inverse
                 """)
                 method = int(input("Select method (1 or 2): "))
                 if method not in [1, 2]:
