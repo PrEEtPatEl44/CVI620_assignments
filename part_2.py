@@ -50,15 +50,17 @@ def main():
                 value = int(input("Enter brightness value(use -value for decreasing brgithness): "))
                 edited_img = adjust_brightness(edited_img, value)
                 log_action(f"Brightness {value}")
+            
             elif option == "2":
                 value = float(input("Enter contrast value : "))
                 edited_img = adjust_contrast(edited_img, value)
                 log_action(f"Contrast {value}")
+            
             elif option == "3":
                 edited_img = grayscale(edited_img)
                 log_action("Grayscaled")
+            
             elif option == "4":
-
                 print("Enter the size of padding : ")
                 size = int(input())
                 if size <= 0:
@@ -95,8 +97,7 @@ def main():
                 edited_img = add_padding(edited_img, target_ratio, border_type, size)
                 log_action(f"Padding - size: {size}, ratio: {target_ratio}, type: {pad_option}")
 
-            elif option == "5":
-                
+            elif option == "5": 
                 print("""thresholding method: 
 1. Binary
 2. Inverse
@@ -114,7 +115,6 @@ def main():
                 log_action(f"Thresholding - value: {thresh_value}, type: {'Binary' if method == 1 else 'Inverse'}")
                 
             elif option == "6":
-
                 print("Enter the path of the second image to blend with:")
                 img_path = input()
                 image2 = load_img(img_path)
