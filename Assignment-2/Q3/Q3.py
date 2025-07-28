@@ -1,14 +1,16 @@
 import pandas as pd
 import numpy as np
+import os
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(script_dir, 'mnist_train.csv')
 
-data = pd.read_csv('Q3/mnist_train.csv')
-
+data = pd.read_csv(csv_path)
 
 y = data.iloc[:, 0].values  # first column as labels
 X = data.iloc[:, 1:].values  # rest of the columns as features

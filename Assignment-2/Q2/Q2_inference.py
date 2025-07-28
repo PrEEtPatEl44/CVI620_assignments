@@ -3,13 +3,16 @@ import joblib
 import cv2
 import glob
 import matplotlib.pyplot as plt
+import os
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
-model_knn = joblib.load('Q2/models/knn_model.pkl')
-model_lr = joblib.load('Q2/models/logistic_regression_model.pkl')
-le = joblib.load('Q2/models/label_encoder.pkl')
+model_knn = joblib.load(os.path.join(script_dir, 'models', 'knn_model.pkl'))
+model_lr = joblib.load(os.path.join(script_dir, 'models', 'logistic_regression_model.pkl'))
+le = joblib.load(os.path.join(script_dir, 'models', 'label_encoder.pkl'))
 
-for i, address in enumerate(glob.glob('Q2/internet images/*')):
+internet_images_path = os.path.join(script_dir, 'internet images', '*')
+for i, address in enumerate(glob.glob(internet_images_path)):
     img = cv2.imread(address)
     img = cv2.resize(img, (64, 64))
     img = img.flatten()
