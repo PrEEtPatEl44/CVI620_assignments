@@ -2,10 +2,11 @@ __pycache__/
 *.py[cod]
 */__pycache__/
 
-Q3/mnist_train.csv
-Q3/mnist_test.csv
+Assignment-2/Q3/mnist_train.csv
+Assignment-2/Q3/mnist_test.csv
 
-Q2/train
-Q2/test
+
+Assignment-2/Q2/train
+Assignment-2/Q2/test
 
 *.pkl

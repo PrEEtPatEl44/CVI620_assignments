@@ -14,7 +14,7 @@ X_test = []
 y_test = []
 
 # getting the train data
-for i, address in enumerate(glob.glob('Q2/train/*/*.jpg')):
+for i, address in enumerate(glob.glob('Assignment-2/Q2/train/*/*.jpg')):
     img = cv2.imread(address)
     img = cv2.resize(img, (64, 64))
     img = img.flatten()
@@ -26,7 +26,7 @@ for i, address in enumerate(glob.glob('Q2/train/*/*.jpg')):
 
 
 # getting the test data
-for i, address in enumerate(glob.glob('Q2/test/*/*.jpg')):
+for i, address in enumerate(glob.glob('Assignment-2/Q2/test/*/*.jpg')):
     img = cv2.imread(address)
     img = cv2.resize(img, (64, 64))
     img = img.flatten()
@@ -68,8 +68,9 @@ print(f'KNN Accuracy: {accuracy_knn}')
 
 
 
-os.makedirs('Q2/models', exist_ok=True)
+os.makedirs('Assignment-2/Q2/models', exist_ok=True)
 
-joblib.dump(model_lr, 'Q2/models/logistic_regression_model.pkl')
-joblib.dump(model_knn, 'Q2/models/knn_model.pkl')
-joblib.dump(le, 'Q2/models/label_encoder.pkl')
+
+joblib.dump(model_lr, 'Assignment-2/Q2/models/logistic_regression_model.pkl')
+joblib.dump(model_knn, 'Assignment-2/Q2/models/knn_model.pkl')
+joblib.dump(le, 'Assignment-2/Q2/models/label_encoder.pkl')
